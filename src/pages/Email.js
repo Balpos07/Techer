@@ -353,7 +353,7 @@ export default function Email({ isSidebarOpen, isDarkMode }) {
         }
 
         .content-wrapper {
-          padding: 0px 32px;
+          padding: 32px 32px;
           max-width: 1200px;
           margin: 0 auto;
         }
