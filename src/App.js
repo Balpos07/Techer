@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import GlobalStyles from './styles/global';
 import Home from './pages/Home';
 import Email from './pages/Email';
+import Meeting from './pages/Meeting';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppContent() {
@@ -47,6 +48,9 @@ function AppContent() {
                     } />
                     <Route path="/email" element={
                       <Email isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
+                    } />
+                    <Route path="/meetings" element={
+                      <Meeting isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
                     } />
                   </Routes>
                   <Sidebar 

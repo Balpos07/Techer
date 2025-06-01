@@ -37,7 +37,7 @@ export default function Login({ isDarkMode }) {
         <p className="auth-description">
           {isLogin 
             ? 'Sign in to access your dashboard' 
-            : 'Sign up to start using Copilot'}
+            : 'Sign up to start using Techers'}
         </p>
         
         <button onClick={handleGoogleAuth} className="google-button">

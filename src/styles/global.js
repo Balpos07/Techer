@@ -4,6 +4,8 @@ export default function GlobalStyles({ isDarkMode }) {
   return (
     <style jsx global>{`
 
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
  :root {
         --text-color: #1f2937;
         --text-secondary: #6b7280;
@@ -41,8 +43,7 @@ export default function GlobalStyles({ isDarkMode }) {
   body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+     font-family: "Montserrat", sans-serif;
   }
 
   .App {
@@ -51,7 +52,7 @@ export default function GlobalStyles({ isDarkMode }) {
   }
       .dashboard {
         min-height: 100vh;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+       font-family: "Montserrat", sans-serif;
         transition: all 0.3s ease;
       }
 

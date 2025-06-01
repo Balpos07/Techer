@@ -20,9 +20,9 @@ export default function Navbar({ isDarkMode, isSidebarOpen, toggleDarkMode, togg
             </button>
             <div className="brand">
               <div className="brand-logo">
-                <span>C</span>
+                <span>T</span>
               </div>
-              <span className="brand-name">Copilot</span>
+              <span className="brand-name">Techers</span>
             </div>
           </div>
           

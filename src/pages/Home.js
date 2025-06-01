@@ -1,19 +1,18 @@
-import React from 'react';
-import { 
-  Mail, 
-  FileText, 
-  CheckSquare, 
-  User
-} from 'lucide-react';
+import React from "react";
+import { Mail, FileText, CheckSquare, User } from "lucide-react";
 
 export default function DashboardContent({ isSidebarOpen }) {
   return (
     <>
-      <main className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <main
+        className={`main-content ${
+          isSidebarOpen ? "sidebar-open" : "sidebar-closed"
+        }`}
+      >
         <div className="content-wrapper">
           {/* Welcome Section */}
           <div className="welcome-section">
-            <h1 className="welcome-title">Welcome back, Alex</h1>
+            <h1 className="welcome-title">Welcome back, Techers</h1>
             <p className="welcome-summary">
               Today: 5 new emails | 2 meeting summaries | 3 pending tasks
             </p>
@@ -30,9 +29,7 @@ export default function DashboardContent({ isSidebarOpen }) {
                 <Mail className="card-icon email-icon" size={24} />
               </div>
               <div className="card-number">5</div>
-              <p className="card-description">
-                3 require immediate attention
-              </p>
+              <p className="card-description">3 require immediate attention</p>
             </div>
 
             <div className="card">
@@ -41,9 +38,7 @@ export default function DashboardContent({ isSidebarOpen }) {
                 <FileText className="card-icon meeting-icon" size={24} />
               </div>
               <div className="card-number">2</div>
-              <p className="card-description">
-                Ready for review
-              </p>
+              <p className="card-description">Ready for review</p>
             </div>
 
             <div className="card">
@@ -52,9 +47,7 @@ export default function DashboardContent({ isSidebarOpen }) {
                 <CheckSquare className="card-icon task-icon" size={24} />
               </div>
               <div className="card-number">3</div>
-              <p className="card-description">
-                Due this week
-              </p>
+              <p className="card-description">Due this week</p>
             </div>
           </div>
 
@@ -66,12 +59,11 @@ export default function DashboardContent({ isSidebarOpen }) {
               </div>
               <h2 className="illustration-title">Your AI Assistant is Ready</h2>
               <p className="illustration-description">
-                Start by checking your emails, reviewing meeting summaries, or managing your tasks. 
-                Your productivity companion is here to help streamline your workflow.
+                Start by checking your emails, reviewing meeting summaries, or
+                managing your tasks. Your productivity companion is here to help
+                streamline your workflow.
               </p>
-              <button className="get-started-button">
-                Get Started
-              </button>
+              <button className="get-started-button">Get Started</button>
             </div>
           </div>
         </div>
@@ -123,7 +115,7 @@ export default function DashboardContent({ isSidebarOpen }) {
           margin-bottom: 32px;
         }
 
-       .card {
+        .card {
           border: 1px solid var(--border-color);
           border-radius: 12px;
           padding: 24px;
@@ -149,7 +141,7 @@ export default function DashboardContent({ isSidebarOpen }) {
           font-weight: 600;
           font-size: 18px;
           margin: 0;
-            color: var(--text-color);
+          color: var(--text-color);
         }
 
         .email-icon {
@@ -173,12 +165,12 @@ export default function DashboardContent({ isSidebarOpen }) {
         .card-description {
           font-size: 14px;
           margin: 0;
-            color: var(--text-color);
+          color: var(--text-color);
         }
 
         /* Illustration Area */
         .illustration-area {
-         border: 1px solid var(--border-color);
+          border: 1px solid var(--border-color);
           background-color: var(--sidebar-bg);
           border: 1px solid;
           border-radius: 12px;
@@ -192,7 +184,6 @@ export default function DashboardContent({ isSidebarOpen }) {
         }
 
         .avatar-container {
-        
           width: 128px;
           height: 128px;
           margin: 0 auto 24px;
