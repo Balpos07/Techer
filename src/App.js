@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import GlobalStyles from './styles/global';
 import Home from './pages/Home';
+import Email from './pages/Email';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppContent() {
@@ -43,6 +44,9 @@ function AppContent() {
                   <Routes>
                     <Route path="/" element={
                       <Home isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
+                    } />
+                    <Route path="/email" element={
+                      <Email isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
                     } />
                   </Routes>
                   <Sidebar 

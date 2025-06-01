@@ -4,25 +4,33 @@ export default function GlobalStyles({ isDarkMode }) {
   return (
     <style jsx global>{`
 
-        :root {
-    --text-color: #374151;
-    --bg-color: #ffffff;
-    --border-color: #e5e7eb;
-    --sidebar-bg: #ffffff;
-    --hover-bg: #f3f4f6;
-    --active-bg: #e5e7eb;
-    --active-color: #3b82f6;
-  }
+ :root {
+        --text-color: #1f2937;
+        --text-secondary: #6b7280;
+        --bg-color: #ffffff;
+        --border-color: #e5e7eb;
+        --sidebar-bg: #ffffff;
+        --hover-bg: #f3f4f6;
+        --active-bg: #e5e7eb;
+        --active-color: #3b82f6;
+        --icon-color: #4b5563;
+        --navbar-text: #1f2937;
+        --page-title: #111827;
+      }
 
   .dark {
-    --text-color: #ffffff;
-    --bg-color: #1f2937;
-    --border-color: #374151;
-    --sidebar-bg: #111827;
-    --hover-bg: #374151;
-    --active-bg: #4b5563;
-    --active-color: #60a5fa;
-  }
+        --text-color: #f9fafb;
+        --text-secondary: #9ca3af;
+        --bg-color: #111827;
+        --border-color: #374151;
+        --sidebar-bg: #1f2937;
+        --hover-bg: #374151;
+        --active-bg: #4b5563;
+        --active-color: #60a5fa;
+        --icon-color: #d1d5db;
+        --navbar-text: #f9fafb;
+        --page-title: #f9fafb;
+      }
 
   * {
     margin: 0;
@@ -80,11 +88,12 @@ export default function GlobalStyles({ isDarkMode }) {
       }
 
       .light .nav-item {
-        color: #ffffff;
+        color: #374151; 
       }
 
       .light .nav-item:hover {
         background-color: #f3f4f6;
+        color: #1f2937;
       }
 
       .light .nav-item.active {
@@ -140,12 +149,15 @@ export default function GlobalStyles({ isDarkMode }) {
       }
 
       .dark .nav-item {
-        color: #d1d5db;
-      }
+       .dark .nav-item {
+          color: #e5e7eb;  /* Made lighter for better contrast */
+        }
 
-      .dark .nav-item:hover {
-        background-color: #374151;
-      }
+        .dark .nav-item:hover {
+          background-color: #374151;
+          color: #ffffff;  /* Added explicit hover color */
+        }
+
 
       .dark .nav-item.active {
         background-color: #2563eb;
@@ -189,6 +201,36 @@ export default function GlobalStyles({ isDarkMode }) {
 
       .dark .get-started-button:hover {
         background-color: #1d4ed8;
+      }
+
+       .navbar {
+        background-color: var(--sidebar-bg);
+        color: var(--navbar-text);
+      }
+
+      .nav-button svg,
+      .menu-button svg {
+        color: var(--icon-color);
+      }
+
+      .page-title {
+        color: var(--page-title);
+      }
+
+      .page-description {
+        color: var(--text-secondary);
+      }
+
+      .stat-card svg {
+        color: var(--icon-color);
+      }
+
+        .stat-number {
+        color: var(--text-color);
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
       }
     `}</style>
   );

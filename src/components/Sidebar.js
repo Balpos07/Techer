@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
   Mail, 
@@ -8,36 +9,38 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar({ isSidebarOpen, isDarkMode }) {
+   const location = useLocation();
+   
   return (
     <>
       <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'} ${isDarkMode ? 'dark' : 'light'}`}>
         <div className="sidebar-content">
           <nav className="sidebar-nav">
-            <a href="#" className="nav-item active">
+            <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
               <Home size={20} />
               <span>Dashboard</span>
-            </a>
+            </Link>
             
-            <a href="#" className="nav-item">
+            <Link to="/email" className={`nav-item ${location.pathname === '/email' ? 'active' : ''}`}>
               <Mail size={20} />
               <span>Email Assistant</span>
-            </a>
+            </Link>
             
-            <a href="#" className="nav-item">
+            <Link to="/meetings" className={`nav-item ${location.pathname === '/meetings' ? 'active' : ''}`}>
               <FileText size={20} />
               <span>Meeting Summaries</span>
-            </a>
+            </Link>
             
-            <a href="#" className="nav-item">
+            <Link to="/tasks" className={`nav-item ${location.pathname === '/tasks' ? 'active' : ''}`}>
               <CheckSquare size={20} />
               <span>Task Manager</span>
-            </a>
+            </Link>
             
-            <a href="#" className="nav-item">
+            <Link to="/settings" className={`nav-item ${location.pathname === '/settings' ? 'active' : ''}`}>
               <Settings size={20} />
               <span>Settings</span>
-            </a>
-          </nav>
+            </Link>
+             </nav>
         </div>
 
         <style jsx>{`
