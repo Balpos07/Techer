@@ -1,13 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Settings, User, Sun, Moon, Menu, X, FileText } from "lucide-react";
+import React from 'react';
+import { 
+  Settings, 
+  User, 
+  Sun, 
+  Moon,
+  Menu,
+  X,
+  FileText
+} from 'lucide-react';
 
-export default function Navbar({
-  isDarkMode,
-  isSidebarOpen,
-  toggleDarkMode,
-  toggleSidebar,
-}) {
+export default function Navbar({ isDarkMode, isSidebarOpen, toggleDarkMode, toggleSidebar }) {
   return (
     <>
       <nav className="navbar">
@@ -23,19 +25,15 @@ export default function Navbar({
               <span className="brand-name">Techers</span>
             </div>
           </div>
-
+          
           <div className="navbar-right">
-            <Link to="/settings" className="nav-button" title="Settings">
+            <button className="nav-button" title="Settings">
               <Settings size={20} />
-            </Link>
+            </button>
             <button className="nav-button" title="Documents">
               <FileText size={20} />
             </button>
-            <button
-              onClick={toggleDarkMode}
-              className="nav-button"
-              title="Toggle theme"
-            >
+            <button onClick={toggleDarkMode} className="nav-button" title="Toggle theme">
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             <button className="nav-button" title="Profile">
@@ -78,8 +76,7 @@ export default function Navbar({
           gap: 8px;
         }
 
-        .menu-button,
-        .nav-button {
+        .menu-button, .nav-button {
           padding: 8px;
           border: none;
           border-radius: 8px;
@@ -92,19 +89,12 @@ export default function Navbar({
           justify-content: center;
         }
 
-        .nav-button {
-          text-decoration: none;
-          color: inherit;
-        }
-
-        .menu-button:hover,
-        .nav-button:hover {
+        .menu-button:hover, .nav-button:hover {
           background-color: var(--hover-bg, #f3f4f6);
           transform: translateY(-1px);
         }
 
-        .menu-button:active,
-        .nav-button:active {
+        .menu-button:active, .nav-button:active {
           transform: translateY(0);
         }
 
@@ -157,8 +147,7 @@ export default function Navbar({
         }
 
         @media (hover: none) {
-          .menu-button:hover,
-          .nav-button:hover {
+          .menu-button:hover, .nav-button:hover {
             background-color: transparent;
             transform: none;
           }

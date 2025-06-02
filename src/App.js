@@ -8,8 +8,6 @@ import GlobalStyles from './styles/global';
 import Home from './pages/Home';
 import Email from './pages/Email';
 import Meeting from './pages/Meeting';
-import Task from './pages/Task';
-import Settings from './pages/Settings';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function AppContent() {
@@ -53,12 +51,6 @@ function AppContent() {
                     } />
                     <Route path="/meetings" element={
                       <Meeting isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
-                    } />
-                    <Route path="/tasks" element={
-                      <Task isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
-                    } />
-                    <Route path="/settings" element={
-                      <Settings isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
                     } />
                   </Routes>
                   <Sidebar 
