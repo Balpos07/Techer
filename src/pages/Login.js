@@ -1,35 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import GoogleLoginButton from '../components/auth/GoogleLoginButton';
 
 export default function Login({ isDarkMode }) {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const { login } = useAuth();
 
-  const handleGoogleAuth = async () => {
-    try {
-      // Temporary mock user data until backend is ready
-      const mockUser = {
-        id: '1',
-        name: 'Test User',
-        email: 'test@example.com',
-        photoURL: 'https://example.com/avatar.jpg'
-      };
+  const generateRandomState = () => {
+    const array = new Uint8Array(16);
+    window.crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  };
 
-      // Call login function from auth context
-      await login(mockUser);
-      navigate('/');
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+  const handleGoogleAuth = () => {
+    const state = generateRandomState();
+    sessionStorage.setItem("google_oauth_state", state);
+    
+    const params = new URLSearchParams({
+      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+      redirect_uri: `${process.env.REACT_APP_API_URL}/api/auth/google/callback`,
+      response_type: "code",
+      scope: "openid email profile",
+      access_type: "offline",
+      prompt: "consent",
+      state: state,
+    });
+
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   };
 
   return (
-   <div className={`auth-container ${isDarkMode ? 'dark' : 'light'}`}>
+    <div className={`auth-container ${isDarkMode ? 'dark' : 'light'}`}>
       <div className="auth-card">
         <div className="brand-logo">
-          <span>C</span>
+          <span>T</span>
         </div>
         <h1 className="auth-title">
           {isLogin ? 'Welcome back' : 'Create account'}
@@ -48,7 +56,27 @@ export default function Login({ isDarkMode }) {
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
           Continue with Google
-      </button>
+        </button>
+
+        <div className="divider">
+          <span>OR</span>
+        </div>
+
+        <form className="auth-form">
+          <input
+            type="email"
+            placeholder="Email address"
+            className="auth-input"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="auth-input"
+          />
+          <button type="submit" className="submit-button">
+            {isLogin ? 'Sign in' : 'Create account'}
+          </button>
+        </form>
 
         <div className="auth-footer">
           <p>
@@ -64,12 +92,12 @@ export default function Login({ isDarkMode }) {
       </div>
 
       <style jsx>{`
-
-       .dark {
+        .dark {
           --bg-color: #111827;
           --text-color: #ffffff;
           --border-color: #374151;
           --sidebar-bg: #1f2937;
+          --input-bg: #1f2937;
         }
 
         .dark .google-button {
@@ -86,7 +114,16 @@ export default function Login({ isDarkMode }) {
           color: #60a5fa;
         }
 
-        
+        .dark .auth-input {
+          background-color: var(--input-bg);
+          border-color: var(--border-color);
+          color: var(--text-color);
+        }
+
+        .dark .divider {
+          color: var(--text-color);
+        }
+
         .auth-container {
           min-height: 100vh;
           display: flex;
@@ -157,6 +194,63 @@ export default function Login({ isDarkMode }) {
           height: 24px;
         }
 
+        .divider {
+          display: flex;
+          align-items: center;
+          text-align: center;
+          margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+          content: '';
+          flex: 1;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .divider span {
+          padding: 0 10px;
+          color: var(--text-color, #6b7280);
+          font-size: 14px;
+        }
+
+        .auth-form {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .auth-input {
+          width: 100%;
+          padding: 12px;
+          border: 1px solid var(--border-color, #e5e7eb);
+          border-radius: 8px;
+          background-color: var(--sidebar-bg, #ffffff);
+          color: var(--text-color, #374151);
+        }
+
+        .auth-input:focus {
+          outline: none;
+          border-color: #3b82f6;
+        }
+
+        .submit-button {
+          width: 100%;
+          padding: 12px;
+          background-color: #3b82f6;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+          background-color: #2563eb;
+        }
+
         .auth-footer {
           margin-top: 24px;
           color: var(--text-color, #6b7280);
@@ -174,6 +268,12 @@ export default function Login({ isDarkMode }) {
 
         .toggle-auth:hover {
           text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+          .auth-card {
+            padding: 24px;
+          }
         }
       `}</style>
     </div>
