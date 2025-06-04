@@ -16,22 +16,24 @@ export default function Login({ isDarkMode }) {
       .join("");
   };
 
-  const handleGoogleAuth = () => {
-    const state = generateRandomState();
-    sessionStorage.setItem("google_oauth_state", state);
-    
-    const params = new URLSearchParams({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-      redirect_uri: `${process.env.REACT_APP_API_URL}/api/auth/google/callback`,
-      response_type: "code",
-      scope: "openid email profile",
-      access_type: "offline",
-      prompt: "consent",
-      state: state,
-    });
+ const handleGoogleAuth = () => {
+  const state = generateRandomState();
+  sessionStorage.setItem("google_oauth_state", state);
+  
+  const redirectUri = `${window.location.origin}/oauth/callback`;
+  
+  const params = new URLSearchParams({
+    client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: "code",
+    scope: "openid email profile",
+    access_type: "offline",
+    prompt: "consent",
+    state: state,
+  });
 
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-  };
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+};
 
   return (
     <div className={`auth-container ${isDarkMode ? 'dark' : 'light'}`}>

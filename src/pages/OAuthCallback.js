@@ -8,24 +8,68 @@ export default function OAuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const access = params.get("access");
-      const refresh = params.get("refresh");
+      try {
+        // Check for tokens in URL hash
+        const hash = window.location.hash.substring(1);
+        if (hash) {
+          const params = new URLSearchParams(hash);
+          const access = params.get("access");
+          const refresh = params.get("refresh");
 
-      if (access && refresh) {
-        localStorage.setItem("accessToken", access);
-        localStorage.setItem("refreshToken", refresh);
-        
-        // Update auth context
-        await login({
-          token: access,
-          refreshToken: refresh
+          if (access && refresh) {
+            // Store tokens
+            localStorage.setItem("accessToken", access);
+            localStorage.setItem("refreshToken", refresh);
+            
+            // Update auth context with tokens
+            await login({
+              token: access,
+              refreshToken: refresh
+            });
+
+            navigate("/");
+            return;
+          }
+        }
+
+        // If no hash, proceed with code exchange
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+        const state = urlParams.get("state");
+        const storedState = sessionStorage.getItem("google_oauth_state");
+
+        if (!state || state !== storedState) {
+          throw new Error("Invalid state parameter");
+        }
+
+        sessionStorage.removeItem("google_oauth_state");
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google/callback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            code,
+            redirect_uri: 'https://techer-kappa.vercel.app/gmail-redirect'
+          }),
+          credentials: 'include'
         });
 
-        navigate("/dashboard");
-      } else {
-        console.error("Missing access or refresh token");
+        if (!response.ok) {
+          throw new Error('Failed to authenticate');
+        }
+
+        const data = await response.json();
+        
+        // Store tokens from API response
+        localStorage.setItem("accessToken", data.access_token);
+        localStorage.setItem("refreshToken", data.refresh_token);
+        
+        await login(data.user);
+        navigate("/");
+      } catch (error) {
+        console.error("Authentication failed:", error);
         navigate("/login");
       }
     };
@@ -45,6 +89,7 @@ export default function OAuthCallback() {
           display: flex;
           align-items: center;
           justify-content: center;
+          background-color: var(--bg-color, #f9fafb);
         }
 
         .loading-spinner {
