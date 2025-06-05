@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../contexts/AuthContext';
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Check for tokens in URL hash
+        // First check URL hash for direct token response
         const hash = window.location.hash.substring(1);
         if (hash) {
           const params = new URLSearchParams(hash);
@@ -17,33 +18,44 @@ export default function OAuthCallback() {
           const refresh = params.get("refresh");
 
           if (access && refresh) {
-            // Store tokens
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
             
-            // Update auth context with tokens
-            await login({
-              token: access,
-              refreshToken: refresh
-            });
-
-            navigate("/");
-            return;
+            // Decode JWT payload to get user data
+            try {
+              const userData = JSON.parse(atob(access.split('.')[1]));
+              await login({
+                token: access,
+                refreshToken: refresh,
+                user: userData
+              });
+              navigate("/");
+              return;
+            } catch (e) {
+              console.error("Failed to parse JWT:", e);
+              throw new Error("Invalid token format");
+            }
           }
         }
 
-        // If no hash, proceed with code exchange
+        // If no tokens in hash, check for authorization code
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
         const state = urlParams.get("state");
         const storedState = sessionStorage.getItem("google_oauth_state");
 
+        if (!code) {
+          throw new Error("No authorization code found");
+        }
+
         if (!state || state !== storedState) {
           throw new Error("Invalid state parameter");
         }
 
+        // Clear stored state
         sessionStorage.removeItem("google_oauth_state");
 
+        // Exchange code for tokens
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google/callback`, {
           method: 'POST',
           headers: {
@@ -51,18 +63,22 @@ export default function OAuthCallback() {
           },
           body: JSON.stringify({ 
             code,
-            redirect_uri: 'https://techer-kappa.vercel.app/gmail-redirect'
+            redirect_ : process.env.REACT_APP_REDIRECT_URI // Note: Using REDIRECT_URI not REDIRECT_URL
           }),
           credentials: 'include'
         });
 
         if (!response.ok) {
-          throw new Error('Failed to authenticate');
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Authentication failed');
         }
 
         const data = await response.json();
         
-        // Store tokens from API response
+        if (!data.access_token || !data.refresh_token) {
+          throw new Error('Invalid token response from server');
+        }
+
         localStorage.setItem("accessToken", data.access_token);
         localStorage.setItem("refreshToken", data.refresh_token);
         
@@ -70,17 +86,29 @@ export default function OAuthCallback() {
         navigate("/");
       } catch (error) {
         console.error("Authentication failed:", error);
-        navigate("/login");
+        setError(error.message);
+        setTimeout(() => navigate("/login"), 3000);
       }
     };
 
     handleCallback();
   }, [navigate, login]);
 
+  if (error) {
+    return (
+      <div className="oauth-callback">
+        <div className="error-message">
+          <span>{error}</span>
+          <p>Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="oauth-callback">
       <div className="loading-spinner">
-        <span>Completing login...</span>
+        <span>Completing authentication...</span>
       </div>
 
       <style jsx>{`
@@ -94,7 +122,12 @@ export default function OAuthCallback() {
 
         .loading-spinner {
           text-align: center;
-          color: var(--text-secondary);
+          color: var(--text-color, #374151);
+        }
+
+        .error-message {
+          text-align: center;
+          color: var(--error-color, #dc2626);
         }
       `}</style>
     </div>

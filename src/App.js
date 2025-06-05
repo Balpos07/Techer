@@ -10,6 +10,7 @@ import Email from './pages/Email';
 import Meeting from './pages/Meeting';
 import Task from './pages/Task';
 import Settings from './pages/Settings';
+import ConnectGmailButton from './components/auth/ConnectGmailButton';
 import OAuthCallback from './pages/OAuthCallback';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
@@ -33,6 +34,8 @@ function AppContent() {
               <Navigate to="/" replace />
             )
           } />
+             <Route path="/gmail-redirect" element={<OAuthCallback />} />
+          <Route path="/connect-gmail" element={<ConnectGmailButton />} />
              <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route
             path="/*"
