@@ -38,7 +38,6 @@ export default function OAuthCallback() {
           }
         }
 
-        // If no tokens in hash, check for authorization code
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get("code");
         const state = urlParams.get("state");

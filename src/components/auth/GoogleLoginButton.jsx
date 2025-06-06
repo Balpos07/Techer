@@ -1,15 +1,41 @@
-
 import React from 'react';
 import GoogleIcon from '../icons/GoogleIcon';
 
-export default function GoogleLoginButton({ onClick, isDarkMode }) {
+export default function GoogleLoginButton({ isDarkMode, variant = 'login' }) {
+  const generateRandomState = () => {
+    const array = new Uint8Array(16);
+    window.crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  };
+
+  const handleGoogleAuth = () => {
+    const state = generateRandomState();
+    sessionStorage.setItem("google_oauth_state", state);
+    
+    const params = new URLSearchParams({
+      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+      redirect_uri: "https://techer.work.gd/api/auth/gmail/callback",
+      response_type: "code",
+      scope: variant === 'gmail' 
+        ? "openid email profile https://www.googleapis.com/auth/gmail.readonly"
+        : "openid email profile",
+      access_type: "offline",
+      prompt: "consent",
+      state: state,
+    });
+
+     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleGoogleAuth}
       className={`google-button ${isDarkMode ? 'dark' : ''}`}
     >
       <GoogleIcon className="google-icon" />
-      Continue with Google
+      {variant === 'gmail' ? 'Connect Gmail' : 'Continue with Google'}
       
       <style jsx>{`
         .google-button {
