@@ -10,24 +10,24 @@ export default function GoogleLoginButton({ isDarkMode, variant = 'login' }) {
       .join("");
   };
 
-  const handleGoogleAuth = () => {
-    const state = generateRandomState();
-    sessionStorage.setItem("google_oauth_state", state);
-    
-    const params = new URLSearchParams({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-      redirect_uri: "https://techer.work.gd/api/auth/gmail/callback",
-      response_type: "code",
-      scope: variant === 'gmail' 
-        ? "openid email profile https://www.googleapis.com/auth/gmail.readonly"
-        : "openid email profile",
-      access_type: "offline",
-      prompt: "consent",
-      state: state,
-    });
+ const handleGoogleAuth = () => {
+  const state = generateRandomState();
+  sessionStorage.setItem("google_oauth_state", state);
+  
+  const params = new URLSearchParams({
+    client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+    redirect_uri: process.env.REACT_APP_REDIRECT_URI,  // Use from .env
+    response_type: "code",
+    scope: variant === 'gmail' 
+      ? "openid email profile https://www.googleapis.com/auth/gmail.readonly"
+      : "openid email profile",
+    access_type: "offline",
+    prompt: "consent",
+    state: state,
+  });
 
-     window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-  };
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+};
 
   return (
     <button

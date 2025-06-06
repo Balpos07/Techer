@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from "../contexts/AuthContext";
 
 export default function OAuthCallback() {
   const navigate = useNavigate();
@@ -20,14 +20,14 @@ export default function OAuthCallback() {
           if (access && refresh) {
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
-            
+
             // Decode JWT payload to get user data
             try {
-              const userData = JSON.parse(atob(access.split('.')[1]));
+              const userData = JSON.parse(atob(access.split(".")[1]));
               await login({
                 token: access,
                 refreshToken: refresh,
-                user: userData
+                user: userData,
               });
               navigate("/");
               return;
@@ -55,32 +55,32 @@ export default function OAuthCallback() {
         sessionStorage.removeItem("google_oauth_state");
 
         // Exchange code for tokens
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google/callback`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            code,
-            redirect_ : process.env.REACT_APP_REDIRECT_URI // Note: Using REDIRECT_URI not REDIRECT_URL
-          }),
-          credentials: 'include'
-        });
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/google/callback`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ 
+    code,
+    redirect_uri: process.env.REACT_APP_REDIRECT_URI  // Correct parameter name
+  }),
+  credentials: 'include'
+});
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || 'Authentication failed');
+          throw new Error(errorData.message || "Authentication failed");
         }
 
         const data = await response.json();
-        
+
         if (!data.access_token || !data.refresh_token) {
-          throw new Error('Invalid token response from server');
+          throw new Error("Invalid token response from server");
         }
 
         localStorage.setItem("accessToken", data.access_token);
         localStorage.setItem("refreshToken", data.refresh_token);
-        
+
         await login(data.user);
         navigate("/");
       } catch (error) {
