@@ -1,46 +1,69 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  Home, 
-  Mail, 
-  FileText, 
-  CheckSquare, 
-  Settings
-} from 'lucide-react';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Home, Mail, FileText, CheckSquare, Settings } from "lucide-react";
 
 export default function Sidebar({ isSidebarOpen, isDarkMode }) {
-   const location = useLocation();
-   
+  const location = useLocation();
+
   return (
     <>
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'} ${isDarkMode ? 'dark' : 'light'}`}>
+      <aside
+        className={`sidebar ${isSidebarOpen ? "open" : "closed"} ${
+          isDarkMode ? "dark" : "light"
+        }`}
+      >
         <div className="sidebar-content">
           <nav className="sidebar-nav">
-            <Link to="/" className={`nav-item ${location.pathname === '/' ? 'active' : ''}`}>
+            <Link
+              to="/"
+              className={`nav-item ${
+                location.pathname === "/" ? "active" : ""
+              }`}
+            >
               <Home size={20} />
               <span>Dashboard</span>
             </Link>
-            
-            <Link to="/email" className={`nav-item ${location.pathname === '/email' ? 'active' : ''}`}>
+
+            <Link
+              to="/email"
+              className={`nav-item ${
+                location.pathname === "/email" ? "active" : ""
+              }`}
+            >
               <Mail size={20} />
               <span>Email Assistant</span>
             </Link>
-            
-            <Link to="/meetings" className={`nav-item ${location.pathname === '/meetings' ? 'active' : ''}`}>
+
+            <Link
+              to="/meetings"
+              className={`nav-item ${
+                location.pathname === "/meetings" ? "active" : ""
+              }`}
+            >
               <FileText size={20} />
               <span>Meeting Summaries</span>
             </Link>
-            
-            <Link to="/tasks" className={`nav-item ${location.pathname === '/tasks' ? 'active' : ''}`}>
+
+            <Link
+              to="/tasks"
+              className={`nav-item ${
+                location.pathname === "/tasks" ? "active" : ""
+              }`}
+            >
               <CheckSquare size={20} />
               <span>Task Manager</span>
             </Link>
-            
-            <Link to="/settings" className={`nav-item ${location.pathname === '/settings' ? 'active' : ''}`}>
+
+            <Link
+              to="/settings"
+              className={`nav-item ${
+                location.pathname === "/settings" ? "active" : ""
+              }`}
+            >
               <Settings size={20} />
               <span>Settings</span>
             </Link>
-             </nav>
+          </nav>
         </div>
 
         <style jsx>{`
