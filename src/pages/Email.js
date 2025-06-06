@@ -44,7 +44,7 @@ export default function Email({ isSidebarOpen, isDarkMode }) {
     {
       id: 3,
       subject: "Client Presentation Feedback",
-      sender: "Shina Oyedele",
+      sender: "Oyehina Oyedele",
       email: "shina.oyedele@client.com",
       time: "6 hours ago",
       summary:
