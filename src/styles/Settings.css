@@ -1,0 +1,288 @@
+
+        .main-content {
+          flex: 1;
+          transition: margin-left 0.3s ease;
+          margin-top: 64px;
+        }
+
+        .main-content.sidebar-open {
+          margin-left: 256px;
+        }
+
+        .main-content.sidebar-closed {
+          margin-left: 0;
+        }
+
+        .content-wrapper {
+          padding: 32px;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .page-header {
+          margin-bottom: 32px;
+        }
+
+        .page-title {
+          color: var(--page-title);
+          font-size: 30px;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+
+        .page-description {
+          color: var(--text-secondary);
+          margin-bottom: 24px;
+        }
+
+        .settings-grid {
+          display: grid;
+          gap: 24px;
+        }
+
+        .settings-section {
+          background-color: var(--sidebar-bg);
+          border: 1px solid var(--border-color);
+          border-radius: 12px;
+          padding: 24px;
+        }
+
+        .section-title {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: var(--text-color);
+          font-size: 18px;
+          margin-bottom: 20px;
+        }
+
+        .setting-items {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .setting-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          background-color: var(--input-bg);
+        }
+
+        .setting-item.profile-photo {
+          align-items: flex-start;
+        }
+
+        .setting-info h3 {
+          color: var(--text-color);
+          font-size: 16px;
+          margin: 0 0 4px 0;
+        }
+
+        .setting-info p {
+          color: var(--text-secondary);
+          font-size: 14px;
+          margin: 0;
+        }
+
+        .photo-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .photo-placeholder {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          background-color: var(--border-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text-secondary);
+          overflow: hidden;
+        }
+
+        .profile-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .integration-item {
+          flex-direction: column;
+          align-items: stretch !important;
+          gap: 16px;
+        }
+
+        .integration-info {
+          flex: 1;
+        }
+
+        .integration-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 8px;
+        }
+
+        .integration-header h3 {
+          margin: 0;
+        }
+
+        .status-badge {
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+
+        .status-badge.connected {
+          background-color: #e7f5e7;
+          color: #2d7d32;
+        }
+
+        .status-badge.manual {
+          background-color: #fff3cd;
+          color: #856404;
+        }
+
+        .status-badge.coming-soon {
+          background-color: #e3f2fd;
+          color: #1565c0;
+        }
+
+        .setting-button {
+          padding: 8px 16px;
+          background-color: var(--active-color);
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+
+        .setting-button:hover:not(:disabled) {
+          background-color: var(--active-hover);
+        }
+
+        .setting-button.secondary {
+          background-color: var(--border-color);
+          color: var(--text-color);
+        }
+
+        .setting-button.secondary:hover {
+          background-color: var(--input-bg);
+        }
+
+        .setting-button.danger {
+          background-color: #dc3545;
+        }
+
+        .setting-button.danger:hover {
+          background-color: #c82333;
+        }
+
+        .setting-button.disabled {
+          background-color: var(--border-color);
+          color: var(--text-secondary);
+          cursor: not-allowed;
+        }
+
+        .setting-select {
+          padding: 8px 16px;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          background-color: var(--sidebar-bg);
+          color: var(--text-color);
+          cursor: pointer;
+          min-width: 120px;
+        }
+
+        .setting-input {
+          padding: 8px 16px;
+          border: 1px solid var(--border-color);
+          border-radius: 6px;
+          background-color: var(--sidebar-bg);
+          color: var(--text-color);
+          min-width: 200px;
+        }
+
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .modal {
+          background-color: var(--sidebar-bg);
+          border-radius: 12px;
+          padding: 24px;
+          max-width: 400px;
+          width: 90%;
+          border: 1px solid var(--border-color);
+        }
+
+        .modal h3 {
+          color: var(--text-color);
+          margin: 0 0 12px 0;
+          font-size: 18px;
+        }
+
+        .modal p {
+          color: var(--text-secondary);
+          margin: 0 0 20px 0;
+          line-height: 1.5;
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+          .main-content.sidebar-open {
+            margin-left: 0;
+          }
+
+          .content-wrapper {
+            padding: 16px;
+          }
+
+          .setting-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+          }
+
+          .setting-button,
+          .setting-select,
+          .setting-input {
+            width: 100%;
+          }
+
+          .photo-section {
+            width: 100%;
+            justify-content: space-between;
+          }
+
+          .integration-item .setting-button {
+            align-self: flex-start;
+            width: auto;
+          }
+        }

@@ -31,95 +31,34 @@ function AppContent() {
     <div className={`App ${isDarkMode ? "dark" : "light"}`}>
       <Router>
         <GlobalStyles isDarkMode={isDarkMode} />
-        <Routes>
-          <Route
-            path="/login"
-            element={
-              !user ? (
-                <Login onLogin={login} isDarkMode={isDarkMode} />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
-          />
-          <Route path="/gmail-redirect" element={<OAuthCallback />} />
-          <Route
-            path="/connect-gmail"
-            element={
-              <GoogleLoginButton isDarkMode={isDarkMode} variant="gmail" />
-            }
-          />
-          <Route path="/oauth/callback" element={<OAuthCallback />} />
-          <Route
-            path="/*"
-            element={
-              user ? (
-                <>
-                  <Navbar
-                    toggleSidebar={toggleSidebar}
-                    toggleDarkMode={toggleDarkMode}
-                    isDarkMode={isDarkMode}
-                    isSidebarOpen={isSidebarOpen}
-                    onLogout={logout}
-                  />
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <Home
-                          isSidebarOpen={isSidebarOpen}
-                          isDarkMode={isDarkMode}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/email"
-                      element={
-                        <Email
-                          isSidebarOpen={isSidebarOpen}
-                          isDarkMode={isDarkMode}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/meetings"
-                      element={
-                        <Meeting
-                          isSidebarOpen={isSidebarOpen}
-                          isDarkMode={isDarkMode}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/tasks"
-                      element={
-                        <Task
-                          isSidebarOpen={isSidebarOpen}
-                          isDarkMode={isDarkMode}
-                        />
-                      }
-                    />
-                    <Route
-                      path="/settings"
-                      element={
-                        <Settings
-                          isSidebarOpen={isSidebarOpen}
-                          isDarkMode={isDarkMode}
-                        />
-                      }
-                    />
-                  </Routes>
-                  <Sidebar
-                    isSidebarOpen={isSidebarOpen}
-                    isDarkMode={isDarkMode}
-                  />
-                </>
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-        </Routes>
+        {!user ? (
+          <Routes>
+            <Route path="/login" element={<Login onLogin={login} isDarkMode={isDarkMode} />} />
+            <Route path="/gmail-redirect" element={<OAuthCallback />} />
+            <Route path="/connect-gmail" element={<GoogleLoginButton isDarkMode={isDarkMode} variant="gmail" />} />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        ) : (
+          <>
+            <Navbar
+              toggleSidebar={toggleSidebar}
+              toggleDarkMode={toggleDarkMode}
+              isDarkMode={isDarkMode}
+              isSidebarOpen={isSidebarOpen}
+              onLogout={logout}
+            />
+            <Sidebar isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />
+            <Routes>
+              <Route path="/" element={<Home isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />} />
+              <Route path="/email" element={<Email isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />} />
+              <Route path="/meetings" element={<Meeting isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />} />
+              <Route path="/tasks" element={<Task isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />} />
+              <Route path="/settings" element={<Settings isSidebarOpen={isSidebarOpen} isDarkMode={isDarkMode} />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </>
+        )}
       </Router>
     </div>
   );
