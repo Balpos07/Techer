@@ -6,8 +6,11 @@ import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 export default function Login({ isDarkMode }) {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
+  const [showOtpForm, setShowOtpForm] = useState(false);
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const { login } = useAuth(); 
 
   const [formData, setFormData] = useState({
@@ -18,7 +21,10 @@ export default function Login({ isDarkMode }) {
     phone_number: '',
     company_name: '',
     role: '',
-    agreed_to_terms: false
+    agreed_to_terms: false,
+    otp: '',
+    new_password: '',
+    confirm_new_password: ''
   });
 
   const generateRandomState = () => {
@@ -54,25 +60,19 @@ export default function Login({ isDarkMode }) {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const endpoint = isLogin 
-        ? "https://techer.work.gd/api/auth/login/" 
-        : "https://techer.work.gd/api/auth/signup/";
-
-      // Prepare the data to send
-      let requestData;
-      if (isLogin) {
-        requestData = {
-          email: formData.email,
-          password: formData.password
-        };
-      } else {
-        requestData = {
+      const response = await fetch("https://techer.work.gd/api/auth/signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
           email: formData.email,
           password: formData.password,
           first_name: formData.first_name,
@@ -81,50 +81,213 @@ export default function Login({ isDarkMode }) {
           company_name: formData.company_name,
           role: formData.role,
           agreed_to_terms: formData.agreed_to_terms
-        };
+        }),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.detail || data.message || "Signup failed";
+        throw new Error(errorMessage);
       }
 
-          console.log('Sending request to:', endpoint);
-    console.log('Request data:', requestData);
+      setSuccessMessage("OTP sent to your email. Please verify to complete registration.");
+      setShowOtpForm(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const response = await fetch(endpoint, {
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://techer.work.gd/api/auth/verify-email-otp/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        "Accept": "application/json"
+          "Accept": "application/json"
         },
-        body: JSON.stringify(requestData),
-      credentials: 'include'
+        body: JSON.stringify({
+          email: formData.email,
+          otp: formData.otp
+        }),
+        credentials: 'include'
       });
 
-     const data = await response.json();
-    console.log('Response:', data);
+      const data = await response.json();
 
       if (!response.ok) {
-      // Handle specific error messages from the server
-      const errorMessage = data.detail || data.message || "Something went wrong";
-      throw new Error(errorMessage);
-    }
+        const errorMessage = data.detail || data.message || "OTP verification failed";
+        throw new Error(errorMessage);
+      }
 
-      if (isLogin) {
-      // Handle login success
+      // If verification is successful, log the user in
       await login(data);
       navigate("/");
-    } else {
-      // Handle signup success
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://techer.work.gd/api/auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.detail || data.message || "Login failed";
+        throw new Error(errorMessage);
+      }
+
+      await login(data);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRequestResetOtp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("https://techer.work.gd/api/auth/request-reset-otp/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email
+        }),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.detail || data.message || "Failed to send OTP";
+        throw new Error(errorMessage);
+      }
+
+      setSuccessMessage("OTP sent to your email. Please check and enter it below.");
+      setShowOtpForm(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    if (formData.new_password !== formData.confirm_new_password) {
+      setError("Passwords don't match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("https://techer.work.gd/api/auth/verify-reset-otp/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          otp: formData.otp,
+          new_password: formData.new_password
+        }),
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data.detail || data.message || "Password reset failed";
+        throw new Error(errorMessage);
+      }
+
+      setSuccessMessage("Password reset successfully. You can now login with your new password.");
+      setIsResetPassword(false);
+      setShowOtpForm(false);
       setIsLogin(true);
       setFormData(prev => ({
         ...prev,
-        password: '' // Clear password after signup
+        password: '',
+        new_password: '',
+        confirm_new_password: '',
+        otp: ''
       }));
-      setError("Account created successfully! Please log in.");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Auth Error:', err);
-    setError(err.message || "Failed to process your request");
-  } finally {
-    setLoading(false);
-  }
+  };
+
+  const handleSubmit = async (e) => {
+    if (isResetPassword) {
+      if (showOtpForm) {
+        await handleResetPassword(e);
+      } else {
+        await handleRequestResetOtp(e);
+      }
+    } else if (isLogin) {
+      await handleLogin(e);
+    } else {
+      if (showOtpForm) {
+        await handleVerifyOtp(e);
+      } else {
+        await handleSignup(e);
+      }
+    }
+  };
+
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
+    setIsResetPassword(false);
+    setShowOtpForm(false);
+    setError("");
+    setSuccessMessage("");
+  };
+
+  const toggleResetPassword = () => {
+    setIsResetPassword(!isResetPassword);
+    setShowOtpForm(false);
+    setError("");
+    setSuccessMessage("");
   };
 
   return (
@@ -134,44 +297,125 @@ export default function Login({ isDarkMode }) {
           <span>T</span>
         </div>
         <h1 className="auth-title">
-          {isLogin ? "Welcome back" : "Create account"}
+          {isResetPassword 
+            ? "Reset Password" 
+            : showOtpForm 
+              ? "Verify OTP" 
+              : isLogin 
+                ? "Welcome back" 
+                : "Create account"}
         </h1>
         <p className="auth-description">
-          {isLogin
-            ? "Sign in to access your dashboard"
-            : "Sign up to start using Techers"}
+          {isResetPassword
+            ? "Enter your email to receive a reset OTP"
+            : showOtpForm
+              ? "Enter the OTP sent to your email"
+              : isLogin
+                ? "Sign in to access your dashboard"
+                : "Sign up to start using Techers"}
         </p>
 
         {error && <div className="error-message">{error}</div>}
+        {successMessage && <div className="success-message">{successMessage}</div>}
 
-        <button onClick={handleGoogleAuth} className="google-button">
-          <svg className="google-icon" viewBox="0 0 24 24">
-            <path
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-              fill="#4285F4"
-            />
-            <path
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-              fill="#34A853"
-            />
-            <path
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-              fill="#FBBC05"
-            />
-            <path
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-              fill="#EA4335"
-            />
-          </svg>
-          Continue with Google
-        </button>
+        {!isResetPassword && !showOtpForm && (
+          <button onClick={handleGoogleAuth} className="google-button">
+            <svg className="google-icon" viewBox="0 0 24 24">
+              <path
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                fill="#4285F4"
+              />
+              <path
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                fill="#34A853"
+              />
+              <path
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                fill="#FBBC05"
+              />
+              <path
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                fill="#EA4335"
+              />
+            </svg>
+            Continue with Google
+          </button>
+        )}
 
-        <div className="divider">
-          <span>OR</span>
-        </div>
+        {!isResetPassword && !showOtpForm && (
+          <div className="divider">
+            <span>OR</span>
+          </div>
+        )}
 
         <form className="auth-form" onSubmit={handleSubmit}>
-          {isLogin ? (
+          {isResetPassword ? (
+            showOtpForm ? (
+              <>
+                <input
+                  type="text"
+                  name="otp"
+                  placeholder="Enter OTP"
+                  className="auth-input"
+                  value={formData.otp}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="password"
+                  name="new_password"
+                  placeholder="New Password"
+                  className="auth-input"
+                  value={formData.new_password}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="password"
+                  name="confirm_new_password"
+                  placeholder="Confirm New Password"
+                  className="auth-input"
+                  value={formData.confirm_new_password}
+                  onChange={handleChange}
+                  required
+                />
+              </>
+            ) : (
+              <input
+                type="email"
+                name="email"
+                placeholder="Email address"
+                className="auth-input"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            )
+          ) : showOtpForm ? (
+            <>
+              <input
+                type="text"
+                name="otp"
+                placeholder="Enter OTP"
+                className="auth-input"
+                value={formData.otp}
+                onChange={handleChange}
+                required
+              />
+              {!isLogin && (
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  className="auth-input"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  disabled
+                />
+              )}
+            </>
+          ) : isLogin ? (
             <>
               <input
                 type="email"
@@ -290,24 +534,62 @@ export default function Login({ isDarkMode }) {
             className="submit-button"
             disabled={loading}
           >
-            {loading ? "Processing..." : isLogin ? "Sign in" : "Create account"}
+            {loading ? "Processing..." : 
+              isResetPassword 
+                ? showOtpForm 
+                  ? "Reset Password" 
+                  : "Send OTP"
+                : showOtpForm 
+                  ? "Verify OTP" 
+                  : isLogin 
+                    ? "Sign in" 
+                    : "Create account"}
           </button>
         </form>
 
         <div className="auth-footer">
-          <p>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button
-              className="toggle-auth"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setError("");
-              }}
-              disabled={loading}
-            >
-              {isLogin ? "Sign up" : "Sign in"}
-            </button>
-          </p>
+          {!isResetPassword && !showOtpForm && (
+            <p>
+              <button
+                className="toggle-auth"
+                onClick={toggleResetPassword}
+                disabled={loading}
+              >
+                Forgot password?
+              </button>
+            </p>
+          )}
+          
+          {!isResetPassword && (
+            <p>
+              {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <button
+                className="toggle-auth"
+                onClick={toggleAuthMode}
+                disabled={loading}
+              >
+                {isLogin ? "Sign up" : "Sign in"}
+              </button>
+            </p>
+          )}
+
+          {(isResetPassword || showOtpForm) && (
+            <p>
+              <button
+                className="toggle-auth"
+                onClick={() => {
+                  setIsResetPassword(false);
+                  setShowOtpForm(false);
+                  setIsLogin(true);
+                  setError("");
+                  setSuccessMessage("");
+                }}
+                disabled={loading}
+              >
+                Back to login
+              </button>
+            </p>
+          )}
         </div>
       </div>
 
@@ -320,11 +602,15 @@ export default function Login({ isDarkMode }) {
           --input-bg: #1f2937;
           --error-bg: #7f1d1d;
           --error-text: #fecaca;
+          --success-bg: #14532d;
+          --success-text: #bbf7d0;
         }
 
         .light {
           --error-bg: #fee2e2;
           --error-text: #b91c1c;
+          --success-bg: #dcfce7;
+          --success-text: #166534;
         }
 
         .dark .google-button {
@@ -399,6 +685,15 @@ export default function Login({ isDarkMode }) {
         .error-message {
           background-color: var(--error-bg);
           color: var(--error-text);
+          padding: 12px;
+          border-radius: 8px;
+          margin-bottom: 16px;
+          font-size: 14px;
+        }
+
+        .success-message {
+          background-color: var(--success-bg);
+          color: var(--success-text);
           padding: 12px;
           border-radius: 8px;
           margin-bottom: 16px;
