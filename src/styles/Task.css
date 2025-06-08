@@ -27,6 +27,7 @@
           font-size: 30px;
           font-weight: bold;
           margin-bottom: 8px;
+          color: var(--text-color);
         }
 
         .page-description {

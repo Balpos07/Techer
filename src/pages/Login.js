@@ -106,7 +106,6 @@ export default function Login({ isDarkMode }) {
       throw new Error(errorMessage);
     }
 
-      // If login is successful, call the login function from your auth context
       if (isLogin) {
       // Handle login success
       await login(data);
