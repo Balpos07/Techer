@@ -1,135 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Mail,
-  Send,
-  Archive,
-  Trash2,
-  Filter,
   Bot,
-  Reply,
   Check,
-  Copy,
+  Filter,
+  Reply,
   Edit3,
+  Copy,
+  Send
 } from "lucide-react";
+import { emailService } from '../services/emailService';
 
 export default function Email({ isSidebarOpen, isDarkMode }) {
+  const [emails, setEmails] = useState([]);
   const [filter, setFilter] = useState("Today");
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [generatedReply, setGeneratedReply] = useState("");
   const [isGeneratingReply, setIsGeneratingReply] = useState(false);
   const [editingReply, setEditingReply] = useState(false);
-  const [emails, setEmails] = useState([
-    {
-      id: 1,
-      subject: "Quarterly Review Meeting",
-      sender: "Ayomiposi Balogun",
-      email: "ayomiposi.balogun@company.com",
-      time: "2 hours ago",
-      summary:
-        "Requesting to schedule quarterly review meeting for next week. Proposes Tuesday or Wednesday afternoon.",
-      suggestions: ["Acknowledge", "Schedule Meeting", "Reschedule"],
-      handled: false,
-    },
-    {
-      id: 2,
-      subject: "Project Deadline Extension",
-      sender: "Samson Oke",
-      email: "samson.oke@company.com",
-      time: "4 hours ago",
-      summary:
-        "Team needs additional 3 days for the mobile app project due to unexpected technical challenges.",
-      suggestions: ["Approve Extension", "Request Details", "Decline"],
-      handled: false,
-    },
-    {
-      id: 3,
-      subject: "Client Presentation Feedback",
-      sender: "Oyehina Oyebola",
-      email: "shina.oyedele@client.com",
-      time: "6 hours ago",
-      summary:
-        "Very positive feedback on yesterday's presentation. Wants to discuss next steps and timeline.",
-      suggestions: ["Thank & Follow Up", "Schedule Call", "Send Documents"],
-      handled: false,
-    },
-    {
-      id: 4,
-      subject: "Budget Approval Request",
-      sender: "Techers Team",
-      email: "techers.team@company.com",
-      time: "1 day ago",
-      summary:
-        "Requesting approval for additional marketing budget of $15,000 for Q2 campaigns.",
-      suggestions: ["Approve", "Request Breakdown", "Discuss Alternatives"],
-      handled: false,
-    },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const filterOptions = ["Today", "Yesterday", "This Week"];
 
-  const filteredEmails = emails.filter((email) => !email.handled);
+  useEffect(() => {
+    fetchEmails();
+  }, []);
 
-  const generateReply = async (email, suggestion) => {
-    setIsGeneratingReply(true);
-    setSelectedEmail(email);
-
-    // Simulate AI response generation
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    let reply = "";
-    switch (suggestion) {
-      case "Acknowledge":
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nThank you for your email regarding "${
-          email.subject
-        }". I've received your message and will review the details.\n\nI'll get back to you shortly with my response.\n\nBest regards`;
-        break;
-      case "Schedule Meeting":
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nThank you for reaching out about the quarterly review meeting.\n\nI'm available both Tuesday and Wednesday afternoon as you suggested. Tuesday at 2 PM works particularly well for me.\n\nPlease let me know which time works best for you, and I'll send out a calendar invite.\n\nBest regards`;
-        break;
-      case "Approve Extension":
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nI understand the technical challenges your team is facing with the mobile app project.\n\nI'm approving the 3-day extension. Please ensure the revised timeline accounts for thorough testing.\n\nKeep me updated on the progress.\n\nBest regards`;
-        break;
-      case "Thank & Follow Up":
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nThank you so much for the positive feedback on yesterday's presentation! It's great to hear that it resonated well with your team.\n\nI'd love to discuss the next steps and timeline as you mentioned. Would you be available for a brief call this week?\n\nLooking forward to moving forward together.\n\nBest regards`;
-        break;
-      case "Request Details":
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nThank you for the heads up about the project timeline.\n\nCould you provide more details about the specific technical challenges your team is encountering? This will help me better understand the situation and provide appropriate support.\n\nBest regards`;
-        break;
-      default:
-        reply = `Hi ${
-          email.sender.split(" ")[0]
-        },\n\nThank you for your email. I'll review this and get back to you soon.\n\nBest regards`;
+  const fetchEmails = async () => {
+    try {
+      setLoading(true);
+      const data = await emailService.getEmails();
+      setEmails(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    setGeneratedReply(reply);
-    setIsGeneratingReply(false);
   };
 
-  const markAsHandled = (emailId) => {
-    setEmails(
-      emails.map((email) =>
+  const generateReply = async (email, suggestion) => {
+    try {
+      setIsGeneratingReply(true);
+      setSelectedEmail(email);
+      
+      const response = await emailService.generateResponse(email.id, suggestion);
+      setGeneratedReply(response.content);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsGeneratingReply(false);
+    }
+  };
+
+  const markAsHandled = async (emailId) => {
+    try {
+      await emailService.updateEmailStatus(emailId, 'handled');
+      setEmails(emails.map(email => 
         email.id === emailId ? { ...email, handled: true } : email
-      )
-    );
-    if (selectedEmail && selectedEmail.id === emailId) {
-      setSelectedEmail(null);
-      setGeneratedReply("");
+      ));
+      if (selectedEmail?.id === emailId) {
+        setSelectedEmail(null);
+        setGeneratedReply("");
+      }
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedReply);
   };
+
+  const filteredEmails = emails.filter(email => !email.handled);
 
   return (
     <>
